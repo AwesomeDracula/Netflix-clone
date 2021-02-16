@@ -4,6 +4,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: {
     user: null,
+    plan: null,
   },
   reducers: {
     login: (state, action) => {
@@ -12,11 +13,15 @@ export const userSlice = createSlice({
     logout: (state) => {
       state.user = null;
     },
+    setUserPlan: (state, action) => {
+      state.plan = action.payload;
+    }
   },
 });
 
-export const { login, logout } = userSlice.actions;
+export const { login, logout, setUserPlan } = userSlice.actions;
 
 export const selectUser = state => state.user.user;
+export const selectUserPlan = state => state.user.plan;
 
 export default userSlice.reducer;

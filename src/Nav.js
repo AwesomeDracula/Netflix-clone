@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { selectUserPlan } from './features/userSlice';
 import './Nav.css';
 
 function Nav() {
+    const currentPlan = useSelector(selectUserPlan)?.plan;
     const [show, handleShow] = useState(false);
     const history = useHistory();
     const transitionNavBar = () => {
@@ -23,7 +26,10 @@ function Nav() {
         <div className={`nav ${show && 'nav__black'}`}>
             <div className="nav__contents">
                 <img
-                    onClick={() => history.push('/')}
+                    onClick={() => 
+                        { if(currentPlan) history.push('/')
+                            else alert("Please subcribe a plan first");
+                    }}
                     className="nav__logo"
                     src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c529.png" 
                     alt="" />

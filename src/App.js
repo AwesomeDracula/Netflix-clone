@@ -5,15 +5,17 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  Redirect,
 } from "react-router-dom";
 import LoginScreen from './screens/LoginScreen';
-import { auth } from './firebase';
+import { auth, database } from './firebase';
 import {useDispatch, useSelector} from 'react-redux';
-import { login, logout, selectUser } from './features/userSlice';
+import { login, logout, selectUser, selectUserPlan, setUserPlan } from './features/userSlice';
 import ProfileScreen from './screens/ProfileScreen';
 
 function App() {
   const user = useSelector(selectUser);
+  const currentPlan = useSelector(selectUserPlan)?.plan;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -22,7 +24,10 @@ function App() {
         dispatch(login({
           uid: userAuth.uid,
           email: userAuth.email
-        }))
+        }));
+        database.ref('users/' + userAuth.uid).on('value', (snapshot) => {
+          dispatch(setUserPlan(snapshot.val()));
+        })
       }
       else dispatch(logout());
     });
@@ -37,7 +42,8 @@ function App() {
           <Route path="/profile">
             <ProfileScreen />
           </Route>
-          <Route exact path="/">
+          <Route exact path='/'>
+            {!currentPlan && (<Redirect to="/profile"/>)}
             <HomeScreen />
           </Route>
         </Switch>

@@ -7,6 +7,8 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import ReactPlayer from 'react-player';
+import { useSelector } from 'react-redux';
+import { selectUserPlan } from './features/userSlice';
 
 const useStyles = makeStyles((theme) => ({
     modal: {
@@ -24,8 +26,9 @@ const useStyles = makeStyles((theme) => ({
 
 function Row({title , fetchUrl, isLargeRow = false}) {
     const [movies, setMovies] = useState([]);
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const [currentTrailer, setCurrentTrailer] = useState('');
+    const currentPlan = useSelector(selectUserPlan)?.plan;
 
     const classes = useStyles();
 
@@ -47,17 +50,22 @@ function Row({title , fetchUrl, isLargeRow = false}) {
                 {movies.map(movie => (
                     ((isLargeRow && movie.poster_path) ||
                     (!isLargeRow && movie.backdrop_path)) &&
-                    (<img onClick={async function(){
-                        await movieTrailer(null,{tmdbId: movie?.id}).then(res => {
-                            setCurrentTrailer(res);
-                            if(res) setOpen(true);
-                            else alert('There is no available trailer for this movie!');
-                        })
-                    }}
-                    className={`row__poster ${isLargeRow && "row__posterLarge"}`}
-                    key={movie.id}
-                    src={`${base_url}${isLargeRow ? movie?.poster_path : movie?.backdrop_path}`} 
-                    alt={movie?.name}/>)
+                    (
+                        <img onClick={() => {
+                            if(currentPlan === "Basic") alert("Upgrade your plan to Standard or Premium to watch movie trailers");
+                            else {
+                                movieTrailer(null,{tmdbId: movie?.id}).then(res => {
+                                    setCurrentTrailer(res);
+                                    if(res) setOpen(true);
+                                    else alert('There is no available trailer for this movie!');
+                                })
+                            }                          
+                        }}
+                        className={`row__poster ${isLargeRow && "row__posterLarge"}`}
+                        key={movie.id}
+                        src={`${base_url}${isLargeRow ? movie?.poster_path : movie?.backdrop_path}`} 
+                        alt={movie?.name}/>
+                    )
                 ))}
             </div>
             <Modal
