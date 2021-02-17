@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, selectUserPlan, setUserPlan } from '../features/userSlice';
 import './PlansScreen.css';
-import {database} from '../firebase'; 
-
+import {database} from '../firebase';
+import toast from 'toast-me';
 function PlansScreen() {
     const user = useSelector(selectUser);
     const currentPlan = useSelector(selectUserPlan)?.plan;
@@ -25,9 +25,12 @@ function PlansScreen() {
                     <h6>4K + HDR</h6>
                 </div>
                 <button onClick={() => {
-                        writeUserData(user?.uid,'Premium');
-                        dispatch(setUserPlan({plan: 'Premium'}))}}
-                        className={currentPlan === "Premium" && 'plansscreen__currentbtn'}>
+                            writeUserData(user?.uid,'Premium');
+                            dispatch(setUserPlan({plan: 'Premium'}));
+                            toast('Success!',{duration: 2000, toastClass: 'green'})
+                        }}
+                        className={currentPlan === "Premium" && 'plansscreen__currentbtn'}
+                        disabled={currentPlan === "Premium"}>
                     {currentPlan === "Premium" && 'Current package' || 'Subcribe'}
                 </button>
             </div>
@@ -38,7 +41,11 @@ function PlansScreen() {
                 </div>
                 <button onClick={() => {
                         writeUserData(user?.uid,'Standard');
-                        dispatch(setUserPlan({plan: 'Standard'}))}} className={currentPlan === "Standard" && 'plansscreen__currentbtn'}>
+                        dispatch(setUserPlan({plan: 'Standard'}))
+                        toast('Success!',{duration: 2000, toastClass: 'green'})
+                    }}    
+                    className={currentPlan === "Standard" && 'plansscreen__currentbtn'}
+                    disabled={currentPlan === "Standard"}>    
                     {currentPlan === "Standard" && 'Current package' || 'Subcribe'}
                 </button>
             </div>
@@ -47,9 +54,14 @@ function PlansScreen() {
                     <h5 className={currentPlan === "Basic" && 'plansscreen__current'}>Basic </h5>
                     <h6>480p</h6>
                 </div>
-                <button onClick={() => {
+                <button onClick={(e) => {
                         writeUserData(user?.uid,'Basic');
-                        dispatch(setUserPlan({plan: 'Basic'}))}} className={currentPlan === "Basic" && 'plansscreen__currentbtn'}>
+                        dispatch(setUserPlan({plan: 'Basic'}));
+                        toast('Success!',{duration: 2000, toastClass: 'green'})        
+                    }} 
+                        className={currentPlan === "Basic" && 'plansscreen__currentbtn'}
+                        disabled={currentPlan === "Basic"}
+                        >                       
                     {currentPlan === "Basic" && 'Current package' || 'Subcribe'}
                 </button>
             </div>
